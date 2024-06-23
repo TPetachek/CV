@@ -1,0 +1,704 @@
+ <html>
+    <head>
+  <meta charset="utf-8">
+
+<! — Заставляем всё это вести себя как в Internet Explorer 8. ТОЛЬКО в этом режиме работает и таблица, и запуск VBS—>
+<meta http-equiv="x-ua-compatible"  content="ie=8">
+
+
+<! — ФЕСТИВАЛЬ КОСТЫЛЕЙ И ВЕЛОСИПЕДОВ—>
+    <title>Редактор файла подтверждения ТТН</title>
+
+  <style type="text/css">
+
+  TABLE {
+    width: 100%; /* Ширина таблицы */
+    border: none; /* Рамка вокруг таблицы */
+	margin-bottom: 5%;
+	margin-right: 15px;
+	background-color: #3775dd
+   }
+   TD {
+padding: 10px;
+	padding: 10px;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+	color: white;
+	border-top: 1px solid #716561;
+   }
+   TH {
+	font-weight: 500;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+	text-align: left;
+	color: white;
+	border-top: 2px solid #716561;
+	border-bottom: 2px solid #716561;
+   }
+
+ tr:hover {
+    background: #002fed; /* Цвет фона при наведении */
+    color: #fff; /* Цвет текста при наведении */
+   }
+
+
+.frm {
+	background-color: #87ceeb;
+	background: #87ceeb;
+}
+
+.ui_table {
+color: #783114;
+background: #87ceeb;
+}
+
+
+.btn {
+	display: inline-block;	
+	box-sizing: border-box;
+	padding: 0 20px;
+	margin: 0 15px 15px 0;
+	outline: none;
+	border: none;  
+	border-radius: 4px;
+	height: 32px;
+	width:256px;
+	line-height: 32px;
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: none;
+	color: #fff;
+	background-color: #3775dd;
+	box-shadow: 0 2px #21487f;
+	cursor: pointer;
+	user-select: none;
+	appearance: none;
+	touch-action: manipulation;  
+	vertical-align: top;
+}
+.btn:hover {
+	background-color: #002fed;
+}
+.btn:active {
+	background-color: #2f599e !important;
+}
+.btn:focus-visible {
+	box-shadow: 0 0 0 3px lightskyblue;
+}
+.btn:disabled {
+	background-color: #6c87b5;
+	pointer-events: none;
+}
+
+.textcols {
+	white-space: nowrap;
+}
+.textcols-item {
+	white-space: normal;	
+	display: inline-block;
+	width: 45%;
+	vertical-align: top;
+	background-color: #87ceeb;
+	background: #87ceeb;
+}
+.textcols-item_2 {
+	white-space: normal;	
+	display: inline-block;
+	width: 45%;
+	vertical-align: top;
+	//background-color: #3775dd;
+	//background: transparent;
+}
+.textcols .textcols-item:first-child {
+
+	margin-left: 5%;
+	margin-right: 5%;
+}
+
+p {
+	margin-left:10px;
+	margin-right:10px;
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: none;
+	color: #fff;
+   	text-shadow: 1px 2px 2px #000, 2px 4px 4px red;
+	background-color: #3775dd;
+	text-align: left;
+   font-family: Roboto;
+}
+
+input[type="text"] {
+   margin-left:15px;
+   margin-right:15px;
+   border: 2px solid #002fed;; //цвет рамки
+   border-radius: 15px; //закругление углов (общее)
+   background: #ffffff !important;
+   background-color: #ADD8E6;
+   outline: none; // 
+   height: 24px; // высота на свое усмотрение
+   width: 120px; // ширина на свое усмотрение
+   color: red; //цвет шрифта в обычном состоянии
+   font-size: 14px; 
+   font-family: Roboto; 
+   text-align: center;
+}
+
+body{
+background: url("Orel.png"); Ссылка здорового человека
+ background-color: #87ceeb;
+ background: #87ceeb;
+ background-size: no-repeat;
+ background-position: center;
+            background-size: 25%;
+}
+
+html,body{
+ background-color: #87ceeb;
+ background: #87ceeb;
+scrollbar-3dlight-color: #6c87b5;
+scrollbar-arrow-color: #002fed;
+scrollbar-base-color: #6c87b5;
+scrollbar-highlight-color:
+scrollbar-track-color:
+scrollbar-shadow-color:
+scrollbar-dark-shadow-color:
+}
+  </style>
+
+<! —Часть первая. Скриптовая. —>
+	<! — JS—>
+    <script>
+	function GetTTNList (file_path)
+	{
+ 	var ttn_m = [];
+	var date_m = [];
+
+
+	var fso = new ActiveXObject("Scripting.FileSystemObject");
+	var ts = fso.OpenTextFile(file_path);
+	var result = new Array;
+	var i = 0;
+	var find_number = false;
+	var poryad_nomer = 0;
+	while (!ts.AtEndOfStream)
+    		{
+		var r = ts.ReadLine();
+		var x = /\-\d{10}/.exec(r);
+		var y = /\d{4}\-\d{2}\-\d{2}/.exec(r);
+		if (x !== null) 
+			{
+			find_number = true;
+			ttn_m[poryad_nomer] = x;
+			}
+		if (y !== null && find_number == true) 
+			{
+			date_m[poryad_nomer] = y;
+			poryad_nomer++;
+			}
+		i++;
+  		  }
+		ts.Close();
+
+		var node = document.getElementById("ttn_table");
+		while (node.hasChildNodes()) {
+		  node.removeChild(node.lastChild);
+		}
+
+		var table = document.getElementById ('ttn_table')
+
+		for (var j = 0; j < poryad_nomer; j++) {
+			var tr = document.createElement('tr');
+		for (var i = 0; i < 2; i++) {
+			var td = document.createElement('td');
+			if (i == 0 | i% 2 === 0)
+				{
+				var inner_p1 = '<a href "#" onClick = \'FromTable(this.innerHTML)\'>';
+				var inner_p2 = 'TTN'+ttn_m[j];
+				var inner_p3 = '</a>';
+				var inner = inner_p1+inner_p2+inner_p3;
+				td.innerHTML =  inner;
+				}
+			else
+				{
+				td.innerHTML = date_m[j];
+				}
+			tr.appendChild(td);
+		}
+		table.appendChild(tr);
+	}
+}
+
+	function FromTable (number)
+		{
+		var ttnnik = document.getElementById('ttninput');
+		ttnnik.value = number;
+		}
+
+
+    </script>
+
+	<script>
+
+	function parseText()
+	{
+	var fso = new ActiveXObject("Scripting.FileSystemObject");
+	var ts = fso.OpenTextFile("utm.txt");
+	var result = new Array;
+	var i = 0;
+	var fsraridjs
+	while (!ts.AtEndOfStream)
+    		{
+		var r = ts.ReadLine();
+		var x = /\d{12}/.exec(r);
+		result[i] = x;
+		i++;
+		fsraridjs = x;
+		document.getElementById('fsrarinput').value = fsraridjs;
+  		  }
+		ts.Close();
+
+	}
+	</script>
+
+	<script type="text/javascript">
+	while (true) {
+	    try {
+		var w = 750, h = 660;
+	       	window.resizeTo(w, h);
+	       	window.moveTo((window.screen.width - w) / 2, (window.screen.height - h) / 2);
+	       	break;
+    	} catch (e) { continue; }
+	}
+</script>
+
+	<! —VBS —>
+	<script language ="VBSCRIPT">
+'=========================================================================================================================================
+		' Событие при нажатии на кнопку отправки - формируется файл sent.bat с командой для отправки в УТМ файла с именем "Pod_TTN" и типом WayBillAct_v4
+		' Файл sent.bat выполняется, затем ждем секунду (чтобы успел выполниться) и удаляем его
+		Sub sent_file_onclick()
+			Dim FSO, MyFile
+			Set FSO = CreateObject("Scripting.FileSystemObject")
+			Set MyFile = FSO.CreateTextFile("sent.bat", True)
+			MyFile.WriteLine("curl -F ""xml_file=@Pod_TTN.xml"" http://localhost:8080/opt/in/WayBillAct_v4")
+			MyFile.Close 
+
+			'CreateObject("Shell.Application").ShellExecute "sent.bat"
+			'Пробуем запустить .bat втихую, без "черных окон"
+			Set WshShell = CreateObject("WScript.Shell")
+			WshShell.Run chr(34) & "sent.bat" & Chr(34), 0
+			Set WshShell = Nothing
+
+			Dim dteWait
+			dteWait = DateAdd("s", 1, Now())
+			Do Until (Now() > dteWait)
+			Loop
+
+			FSO.DeleteFile "sent.bat"
+			MsgBox "Файл ""Pod_TTN.xml"" отправлен в УТМ"
+		End Sub
+'=========================================================================================================================================
+		' Событие при нажатии на кнопку получения FSRAR ID - формируется файл utm.bat, обращающийся к странице настроек ЗАПУЩЕННОГО (!) УТМ и копирующий ее содержимое в файл utm.txt
+		' Файл utm.bat выполняется, затем ждем секунду (чтобы успел выполниться) и удаляем его
+		' Вызываем JS сверху - он находит в файле utm.txt последовательность из 12 цифр (на данный момент единственная такая последовательность - FSRAR ID), сохраняет ее в переменную и вставляет в поле ввода
+		' Ждем секунду (чтобы JS успел отработать) и удаляем utm.txt
+		Sub start_process_in_onclick()
+
+			Dim FSO, MyFile
+			Set FSO = CreateObject("Scripting.FileSystemObject")
+			Set MyFile = FSO.CreateTextFile("utm.bat", True)
+			MyFile.WriteLine("curl -X GET ""http://localhost:8080/api/info/list"" -H  ""accept: application/json"" > utm.txt")
+			MyFile.Close 
+
+			'CreateObject("Shell.Application").ShellExecute "utm.bat"
+			'Пробуем запустить .bat втихую, без "черных окон"
+			Set WshShell = CreateObject("WScript.Shell")
+			WshShell.Run chr(34) & "utm.bat" & Chr(34), 0
+			Set WshShell = Nothing
+
+			Dim dteWait
+			dteWait = DateAdd("s", 1, Now())
+			Do Until (Now() > dteWait)
+			Loop
+
+			FSO.DeleteFile "utm.bat"
+
+			parseText()
+
+			Dim dteWait2
+			dteWait2 = DateAdd("s", 1, Now())
+			Do Until (Now() > dteWait2)
+			Loop
+			FSO.DeleteFile "utm.txt"
+
+			If Document.all("fsrarinputid").value = "" Then
+			MsgBox "Не удалось получить FSRAR ID! "& vbNewLine & vbNewLine & "УТМ запущен? Ключ в порядке?"
+			End If
+		End Sub
+'=========================================================================================================================================
+		' Событие при нажатии на кнопку "Выход"
+	Sub exit_onclick()
+		Window.Close
+		End Sub
+'=========================================================================================================================================
+		' Событие при нажатии на кнопку "Необработанные ТТН"
+
+		Dim Msg, Style, Title, Help, Ctxt, Response, MyString
+		Msg = "Ответа нет уже 10 секунд. Продолжаем ждать?"
+		Style = vbYesNo Or vbCritical Or vbDefaultButton2
+		Title = "Ожидание затянулось..."
+		Ctxt = 1000    ' Define topic context. 
+
+	Sub get_ttn_list_onclick()
+		Dim Iter, stoper
+		Dim s, f
+		Dim TTN_list_get, TTN_need_new_file
+		TTN_need_new_file = false
+		Iter = 0
+
+				msg = Msgbox ("Запрос необработанных накладных можно направить 1 раз в 12 часов.  "& vbNewLine & vbNewLine & "Если запрос уже направлялся ранее, можно поискать ответ в базе, однако информация в нем может быть неактуальной."  & vbNewLine & vbNewLine & "ДА = попытаться отправить новый запрос, НЕТ = поискать ответ на старый запрос", vbYesNo)    
+				If msg = vbYes then  
+				TTN_need_new_file = true
+				Else  
+				TTN_need_new_file = false
+				End If
+
+		if TTN_need_new_file = true Then
+		Set s = CreateObject("Scripting.FileSystemObject")
+	' ... создаем файл запроса и построчно заполняем
+		Set f = s.openTextFile("Zap_TTN.xml", 2, True)
+		f.writeline ("<?xml version=""1.0"" encoding=""UTF-8""?>")
+		f.writeline ("<ns:Documents Version=""1.0"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:ns=""http://fsrar.ru/WEGAIS/WB_DOC_SINGLE_01"" xmlns:qp=""http://fsrar.ru/WEGAIS/QueryParameters"">")
+		f.writeline ("		<ns:Owner>")
+		f.writeline ("			<ns:FSRAR_ID>" + Document.all("fsrarinputid").value + "</ns:FSRAR_ID>")
+		f.writeline ("		</ns:Owner>")
+		f.writeline ("		<ns:Document>")
+		f.writeline ("			<ns:QueryNATTN>")
+		f.writeline ("				<qp:Parameters>")
+		f.writeline ("					<qp:Parameter>")
+		f.writeline ("						<qp:Name>Код</qp:Name>")
+		f.writeline ("						<qp:Value>"+Document.all("fsrarinputid").value+"</qp:Value>")
+		f.writeline ("					</qp:Parameter>")
+		f.writeline ("				</qp:Parameters>")
+		f.writeline ("			</ns:QueryNATTN>")
+		f.writeline ("		</ns:Document>")
+		f.writeline ("	</ns:Documents>")
+		f.Close
+
+		Set ADODBStream = CreateObject("ADODB.Stream")
+		ADODBStream.Type = 2
+		ADODBStream.Charset = "windows-1251"
+		ADODBStream.Open()
+		ADODBStream.LoadFromFile("Zap_TTN.xml")
+		Text = ADODBStream.ReadText()
+		ADODBStream.Close()
+		ADODBStream.Charset = "UTF-8"
+		ADODBStream.Open()
+		ADODBStream.WriteText(Text)
+		ADODBStream.SaveToFile "Zap_TTN.xml", 2
+		ADODBStream.Close()
+
+			Dim FSO, MyFile
+			Set FSO = CreateObject("Scripting.FileSystemObject")
+			Set MyFile = FSO.CreateTextFile("sent_zap.bat", True)
+			MyFile.WriteLine("curl -F ""xml_file=@Zap_TTN.xml"" http://localhost:8080/opt/in/QueryNATTN")
+			MyFile.Close 
+
+			'Пробуем запустить .bat втихую, без "черных окон"
+			Set WshShell = CreateObject("WScript.Shell")
+			WshShell.Run chr(34) & "sent_zap.bat" & Chr(34), 0
+			Set WshShell = Nothing
+
+			Dim dteWait
+			dteWait = DateAdd("s", 1, Now())
+			Do Until (Now() > dteWait)
+			Loop
+
+			FSO.DeleteFile "sent_zap.bat"
+			'FSO.DeleteFile "Zap_TTN.xml"
+			MsgBox "Запрос необработанных накладных отправлен в УТМ. Программа не зависла - ожидается ответ на запрос."
+
+		End If
+
+
+		dim file_path
+		dim file_path_new
+		set FSO = CreateObject("Scripting.FileSystemObject")
+		stoper = false
+
+		Do
+		For each file in FSO.GetFolder("C:\UTM\transporter\xml\ws").Files
+		Set File = FSO.GetFile(file)
+		Set TextStream = File.OpenAsTextStream(1)
+		Str = TextStream.ReadAll()
+		TextStream.Close
+
+		Set objRegExp = CreateObject("VBScript.RegExp") ' Описание объекта
+		objRegExp.Pattern = "WEGAIS/ReplyNoAnswerTTN"
+		GetBool = objRegExp.Test(Str) 
+		if GetBool = true Then
+		MsgBox "Ответ получен!" + CStr(File)
+		file_path = File
+		file_path_new = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%UserProfile%") + "\AppData" +"\Roaming"+ "\TTN\" + "unres.xml"
+		TTN_list_get = true
+		stoper = true
+		FormattingXML(file_path) 'Приводим файл с ответом в читаемый вид
+		GetTTNList(file_path_new)
+		End If
+
+			Dim dteWait2
+			dteWait2 = DateAdd("s", 1, Now())
+			Do Until (Now() > dteWait2)
+			Iter = Iter+1
+			Loop
+
+		Next
+
+		if Iter >= 10 And TTN_list_get <> true Then
+				msg = Msgbox ("Ожидание ответа затянулось. Ждем еще?", vbYesNo)    
+				If msg = vbYes then  
+				Iter = 0
+				Else  
+				Exit Do
+				End If
+		End If
+
+		Loop Until TTN_list_get = true
+
+		End Sub
+'=========================================================================================================================================
+	Sub FormattingXML(file_path) 'Приводим файл с ответом в читаемый вид
+		filePath = file_path
+		filePathNew = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%UserProfile%") + "\AppData" +"\Roaming"+ "\TTN\" + "unres.xml"
+		msgbox (filePathNew)
+		Set fso = CreateObject("Scripting.FileSystemObject")
+		Set fileStream = fso.OpenTextFile(filePath, 1)
+		fileContent = fileStream.ReadAll
+		fileStream.Close
+
+		Dim formattedXML
+		formattedXML = FormatXMLString (fileContent)
+
+		'Set outFileStream = fso.OpenTextFile(filePath,2,True)
+		Set outFileStream = fso.OpenTextFile(filePathNew,2,True)
+		outFileStream.Write formattedXML
+		outFileStream.Close
+			MsgBox "!ОТЛАДКА! Файл отформатирован", vbInformation
+	End Sub
+	
+'=========================================================================================================================================
+	Function FormatXMLString (xmlString) 'Собственно форматирование
+		Dim xmlDoc
+		Set xmlDoc = CreateObject("MSXML2.DOMDocument")
+		'Загружаем файл
+		xmlDoc.LoadXML xmlString
+
+		'Загружен?
+		If xmlDoc.parseError <> 0 Then
+			MsgBox "Ошибка загрузки файла"
+			ExitFunction
+		End If
+		
+		'Преобразуем
+		FormatXMLString = xmlDoc.XML
+	End Function
+'=========================================================================================================================================
+
+		'Событие при нажатии на кнопку "Сформировать файл". Пояснения в коде
+	Sub start_process_ttn_onclick()
+	
+	' Для начала получаем необходимые данные
+
+	' Булево - есть ли уже файл "Pod_TTN"? Ответ получаем, выполняя функцию CreateTTNXML, создающую файл "Pod_TTN", если его еще не существует
+	Dim IsFileExist
+	IsFileExist = CreateTTNXML
+
+	' Отладка
+	Dim Test
+
+	' Переменные - FSRAR ID и номер накладной
+	Dim fsrar_id_inputed
+	Dim ttn_inputed
+
+	'Отладка
+	Test = Document.all("fsrarinputid").value
+
+	' Число, месяц и год из системы
+	Day_ = Day(Date())
+	Month_ = Month(Date())
+	Year_ = Year(Date())
+
+	' Число, месяц и год переводим из числа в строку
+	SDayString = CStr(Day_)
+	SMonthString = CStr(Month_)
+	SYearString = CStr(Year_)
+
+	' Если сегодняшнее число состоит из одного символа - добавляем 0, получая 01, 02, 03 вместо 1, 2, 3
+	If Len(SDayString) = 1 Then
+	  SDayString = "0" + SDayString
+	End If
+
+	' Если номер месяца состоит из одного символа - добавляем 0, получая 01, 02, 03 вместо 1, 2, 3
+	If Len(SMonthString) = 1 Then
+	  SMonthString = "0" + SMonthString
+	End If
+   
+	' Берем значения переменных для FSRAR ID и номера накладной из соответствующих полей на форме
+	fsrar_id_inputed  = Document.all("fsrarinputid").value
+	ttn_inputed	= Document.all("ttninputid").value
+
+	' Вызываем функцию, вносящую изменения в файл "Pod_TTN". Передаем туда FSRAR ID и номер ТТН из полей ввода, ДД/ММ/ГГГГ в текстровом формате и информацию о том, существовал ли уже файл, или мы его только что создали
+	UpdateTTNXML "Pod_TTN.xml", "//ns:FSRAR_ID", "//wa:WBRegId", "//wa:ActDate", "//wa:ACTNUMBER", fsrar_id_inputed, ttn_inputed, SYearString, SMonthString, SDayString, IsFileExist
+		End Sub
+
+'=========================================================================================================================================
+	' Самая некрасивая часть - функция для проверки существования и создания файла "Pod_TTN"
+	Function CreateTTNXML
+		Dim s, f
+		Set s = CreateObject("Scripting.FileSystemObject")
+	'Если файл уже есть, то
+		If s.FileExists("Pod_TTN.xml") Then
+	' ... возвращаем наверх "Истина"
+		CreateTTNXML = true
+	'Иначе - 
+		   Else
+	' ... создаем файл и построчно заполняем
+		Set f = s.openTextFile("Pod_TTN.xml", 2, True)
+		f.writeline ("<?xml version=""1.0"" encoding=""UTF-8""?>")
+		f.writeline ("<ns:Documents Version=""1.0"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:ns=""http://fsrar.ru/WEGAIS/WB_DOC_SINGLE_01"" xmlns:wa=""http://fsrar.ru/WEGAIS/ActTTNSingle_v4"" xmlns:ce=""http://fsrar.ru/WEGAIS/CommonV3"">")
+		f.writeline ("		<ns:Owner>")
+		f.writeline ("			<ns:FSRAR_ID></ns:FSRAR_ID>")
+		f.writeline ("		</ns:Owner>")
+		f.writeline ("		<ns:Document>")
+		f.writeline ("			<ns:WayBillAct_v4>")
+		f.writeline ("			<wa:Header>")
+		f.writeline ("				<wa:IsAccept>Accepted</wa:IsAccept>")
+		f.writeline ("				<wa:ACTNUMBER>1</wa:ACTNUMBER>")
+		f.writeline ("				<wa:ActDate></wa:ActDate>")
+		f.writeline ("				<wa:WBRegId></wa:WBRegId>")
+		f.writeline ("				<wa:Note>Ok!</wa:Note>")
+		f.writeline ("			</wa:Header>")
+		f.writeline ("			<wa:Content>")
+		f.writeline ("			</wa:Content>")
+		f.writeline ("		</ns:WayBillAct_v4>")
+		f.writeline ("	</ns:Document>")
+		f.writeline ("</ns:Documents>")
+		f.Close
+	' Сообщаем, что файла раньше не было
+		CreateTTNXML = false
+		   End If
+		End Function
+
+'=========================================================================================================================================
+Function UpdateTTNXML(strXmlPath, strXmlNode, strXmlNode2, strXmlNode3, strXmlNode4, fsrar_id_inputed, ttn_inputed, SYearString, SMonthString, SDayString, IsFileExist)
+Dim objXDom : Set objXDom = CreateObject("Microsoft.XMLDOM")
+objXDom.Async = False
+objXDom.Load(strXmlPath)
+
+Dim fid_inside
+Dim ttn_inside
+Dim date_y_inside
+Dim date_m_inside
+Dim date_d_inside
+
+fid_inside = fsrar_id_inputed
+ttn_inside = ttn_inputed
+date_y_inside = SYearString
+date_m_inside = SMonthString
+date_d_inside = SDayString
+
+Dim objXNod : Set objXNod = objXDom.SelectSingleNode(strXmlNode)
+  	 If fsrar_id_inputed <> "" then
+   		objXNod.Text = fid_inside
+   	end if
+   objXDom.Save(strXmlPath)
+   
+   Dim objXNod2 : Set objXNod2 = objXDom.SelectSingleNode(strXmlNode2)
+   objXNod2.Text = ttn_inside
+   objXDom.Save(strXmlPath)
+
+   Dim objXNod3 : Set objXNod3 = objXDom.SelectSingleNode(strXmlNode3)
+   objXNod3.Text =  date_y_inside + "-" + date_m_inside + "-" + date_d_inside
+   objXDom.Save(strXmlPath)
+
+   Dim objXNod4 : Set objXNod4 = objXDom.SelectSingleNode(strXmlNode4)
+	if IsFileExist = true	 then
+			objXNod4.Text = CStr((CInt(objXNod4.Text )+1))
+	End if
+   objXDom.Save(strXmlPath)
+
+   Set objXNod = Nothing
+   Set objXDom = Nothing
+
+	MsgBox "Файл ""Pod_TTN.xml"" создан и готов к отправке!"
+End Function
+'=========================================================================================================================================
+	</script>
+
+<! —Часть вторая. Интерфейсная. —>
+<HTA:APPLICATION ID="app"
+	APPLICATIONNAME="Pod" 
+	BORDER="thin"
+
+	MAXIMIZEBUTTON="no"
+	MINIMIZEBUTTON="yes"
+	SCROLLFLAT="no"
+	CAPTION="yes"
+	INNERBORDER="no"
+	ICON=""
+	SCROLL="yes"
+	SHOWINTASKBAR="yes"
+	SINGLEINSTANCE="yes"
+	SYSMENU="no"
+	WINDOWSTATE="normal" />
+
+
+    </head>
+    <body bgcolor="#87ceeb">
+      <H1></H1>
+	<form id = "main_form" class="frm" name="frmTTNEditor1">
+<div class="textcols">
+	<div class="textcols-item">
+     	 <P class = "ui_output">FSRAR ID</P>
+	<input class = "ui_input" type="text" id="fsrarinput" name="fsrarinputid" placeholder="FSRAR ID">
+	<br>
+     	 <P "ui_output">Номер TTN</P>
+	<input class = "ui_input"  type="text" id="ttninput" name="ttninputid" placeholder="TTN">
+	<br>
+	<br>
+	<input class ="btn" value="Получить FSRAR ID   &#128269;"  type="button" name="start_process_in">
+	<br>
+	<br>
+	<input class ="btn" value="Необработанные ТТН   &#128269;"  type="button" name="get_ttn_list">
+	<br>
+
+ 	 <table id="ttn_table" cellspacing="0"></table>
+
+	<br>
+	<br>
+
+	<input class ="btn" value="Сформировать файл  &#128190;"  type="button" name="start_process_ttn">
+	<br>
+	<br>
+	<input class ="btn" value="Отправить файл        &#128386;"  type="button" name="sent_file">
+	<br>
+	<br>
+	<input class ="btn" value="Выход &#10149;"  type="button" name="exit">
+	</div>
+	<div class="textcols-item_2">
+ <P>1. Заполняем поле "FSRAR ID". Может быть заполнено автоматически при нажатии на соответствующую кнопку.</P>
+ <P>2. Заполняем поле "Номер ТТН" <b>(В ПОЛНОЙ ФОРМЕ, НАЧИНАЯ С "TTN-")</b> вручную или при помощи запроса необработанных ТТН:</P>
+ <P>После нажатия на кнопку "Необработанные ТТН" отправляется запрос в УТМ.  Каждые 10 секунд программа проверяет наличие ответа, и если он был получен, список необработанных накладных помещается в таблицу. При щелчке по НОМЕРУ накладной  в таблице он подставляется в поле "Номер ТТН". Если ответ не был получен, программа предложит повторить или прервать ожидание.</P>
+ <P>3. Жмем на кнопку "Сформировать файл". В папке с программой будет создан файл "Pod_TTN.xml" с введенными данными и номером акта, равным "1". Если файл уже существует, то он будет отредактирован, а номер акта автоматически увеличится на единицу.</P>
+ <P>4. Отправляем файл "Pod_TTN.xml" в УТМ нажатием на кнопку "Отправить файл". Факт отправки в УТМ лучше перепроверить.</P>
+	</div>
+</div>
+
+<div class="img"></div>
+
+      </form>
+    </head>
+    </html>
